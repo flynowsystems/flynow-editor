@@ -1,0 +1,80 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "flynow",
+  "homepage": "https://flynowsystems.com",
+  "items": [
+    {
+      "name": "editor",
+      "type": "registry:ui",
+      "title": "Editor",
+      "description": "Editor de conte\u00fado em Markdown sobre ProseMirror: formata\u00e7\u00e3o, listas de tarefa, c\u00f3digo, links e imagens coladas.",
+      "dependencies": [
+        "markdown-it",
+        "prosemirror-commands",
+        "prosemirror-dropcursor",
+        "prosemirror-gapcursor",
+        "prosemirror-history",
+        "prosemirror-inputrules",
+        "prosemirror-keymap",
+        "prosemirror-markdown",
+        "prosemirror-model",
+        "prosemirror-schema-list",
+        "prosemirror-state",
+        "prosemirror-transform",
+        "prosemirror-view"
+      ],
+      "files": [
+        {
+          "path": "registry/flynow-editor/editor.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/editor/editor.tsx"
+        },
+        {
+          "path": "registry/flynow-editor/editor-toolbar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/editor/editor-toolbar.tsx"
+        },
+        {
+          "path": "registry/flynow-editor/editor.css",
+          "type": "registry:ui",
+          "target": "components/ui/editor/editor.css"
+        },
+        {
+          "path": "registry/flynow-editor/schema.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/schema.ts"
+        },
+        {
+          "path": "registry/flynow-editor/commands.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/commands.ts"
+        },
+        {
+          "path": "registry/flynow-editor/lib/markdown.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/lib/markdown.ts"
+        },
+        {
+          "path": "registry/flynow-editor/plugins/input-rules.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/plugins/input-rules.ts"
+        },
+        {
+          "path": "registry/flynow-editor/plugins/keymap.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/plugins/keymap.ts"
+        },
+        {
+          "path": "registry/flynow-editor/plugins/placeholder.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/plugins/placeholder.ts"
+        },
+        {
+          "path": "registry/flynow-editor/plugins/image-upload.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/plugins/image-upload.ts"
+        }
+      ]
+    }
+  ]
+}
