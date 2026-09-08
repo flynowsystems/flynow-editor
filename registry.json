@@ -9,6 +9,7 @@
       "title": "Editor",
       "description": "Editor de conte\u00fado em Markdown sobre ProseMirror: formata\u00e7\u00e3o, listas de tarefa, c\u00f3digo, links e imagens coladas.",
       "dependencies": [
+        "lowlight",
         "markdown-it",
         "prosemirror-commands",
         "prosemirror-dropcursor",
@@ -83,6 +84,16 @@
           "path": "registry/flynow-editor/plugins/code-block-view.ts",
           "type": "registry:ui",
           "target": "components/ui/editor/plugins/code-block-view.ts"
+        },
+        {
+          "path": "registry/flynow-editor/plugins/syntax-highlight.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/plugins/syntax-highlight.ts"
+        },
+        {
+          "path": "registry/flynow-editor/plugins/code-indent.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/plugins/code-indent.ts"
         }
       ]
     }

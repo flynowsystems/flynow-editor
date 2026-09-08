@@ -15,6 +15,7 @@ import {
   toggleStrong,
 } from "@/components/ui/editor/commands"
 import { fromMarkdown, toMarkdown } from "@/components/ui/editor/lib/markdown"
+import { indentCode, indentFor, outdentCode } from "@/components/ui/editor/plugins/code-indent"
 import { buildInputRules } from "@/components/ui/editor/plugins/input-rules"
 import { schema } from "@/components/ui/editor/schema"
 
@@ -190,4 +191,48 @@ test("itálico marca e desmarca a mesma seleção", () => {
 
   const desmarcado = apply(marcado, toggleEm())
   assert.ok(!isMarkActive(desmarcado, schema.marks.em))
+})
+
+test("Enter no bloco de código repete o recuo da linha", () => {
+  const state = EditorState.create({ doc: fromMarkdown("```\n  const a = 1\n```") })
+  const noFim = state.apply(
+    state.tr.setSelection(TextSelection.create(state.doc, state.doc.content.size - 1))
+  )
+
+  assert.equal(indentFor(noFim), "  ")
+})
+
+test("Enter entra um nível depois de abrir bloco", () => {
+  const state = EditorState.create({ doc: fromMarkdown("```\nfunction f() {\n```") })
+  const noFim = state.apply(
+    state.tr.setSelection(TextSelection.create(state.doc, state.doc.content.size - 1))
+  )
+
+  assert.equal(indentFor(noFim), "  ")
+})
+
+test("fora do bloco de código não há recuo automático", () => {
+  const state = EditorState.create({ doc: fromMarkdown("texto") })
+  assert.equal(indentFor(state), null)
+})
+
+test("Tab recua a linha dentro do bloco", () => {
+  const state = EditorState.create({ doc: fromMarkdown("```\nconst a = 1\n```") })
+  const noInicio = state.apply(state.tr.setSelection(TextSelection.create(state.doc, 1)))
+  const recuado = apply(noInicio, indentCode)
+
+  assert.equal(recuado.doc.textContent, "  const a = 1")
+})
+
+test("Shift+Tab remove um nível de recuo", () => {
+  const state = EditorState.create({ doc: fromMarkdown("```\n    const a = 1\n```") })
+  const dentro = state.apply(state.tr.setSelection(TextSelection.create(state.doc, 6)))
+  const menos = apply(dentro, outdentCode)
+
+  assert.equal(menos.doc.textContent, "  const a = 1")
+})
+
+test("realce de sintaxe não muda o Markdown salvo", () => {
+  const entrada = "```php\n<?php echo 1;\n```"
+  assert.equal(toMarkdown(fromMarkdown(entrada)).trim(), entrada)
 })

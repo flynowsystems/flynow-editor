@@ -63,11 +63,21 @@ import { Editor } from "@/components/ui/editor/editor"
 
 ## Bloco de código
 
-Três crases abrem o bloco na hora, como no Linear. A barra do bloco traz o seletor
-de linguagem (31 opções), o botão de quebrar linhas e o de copiar — nada disso entra
-no documento: o Markdown salvo é só a cerca com a linguagem.
+Três crases abrem o bloco na hora, como no Linear. A barra traz o seletor de
+linguagem, o botão de quebrar linhas e o de copiar — nada disso entra no documento:
+o Markdown salvo é só a cerca com a linguagem.
 
-Para mudar a lista de linguagens, edite `lib/languages.ts` no seu projeto.
+**Realce de sintaxe** por decorações do ProseMirror, com
+[lowlight](https://github.com/wooorm/lowlight) (highlight.js). Em "Detectar" a
+linguagem é reconhecida pelo conteúdo e o rótulo mostra o palpite — `PHP (auto)`.
+O texto do documento continua puro: cor nenhuma vai para o Markdown.
+
+**Auto-indentação**: Enter repete o recuo da linha e entra um nível depois de
+`{`, `[`, `(` ou `:`; `}`, `]` e `)` realinham a linha ao serem digitados;
+Tab e Shift+Tab recuam e desrecuam; Backspace no recuo apaga o nível inteiro.
+
+Para mudar as linguagens oferecidas, edite `lib/languages.ts`. Para trocar as
+cores, sobrescreva as variáveis `--flynow-code-*` do `editor.css`.
 
 ## O que o editor entende
 

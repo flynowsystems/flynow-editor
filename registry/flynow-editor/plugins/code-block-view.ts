@@ -1,12 +1,18 @@
 import type { Node as ProseNode } from "prosemirror-model"
 import type { EditorView, NodeView, ViewMutationRecord } from "prosemirror-view"
 
-import { codeLanguages } from "@/components/ui/editor/lib/languages"
+import {
+  codeLanguages,
+  isSupported,
+  languageLabel,
+  lowlight,
+} from "@/components/ui/editor/lib/languages"
+import { refreshHighlight } from "@/components/ui/editor/plugins/syntax-highlight"
 
 /**
- * Bloco de código com barra própria: escolher a linguagem, alternar a quebra de
- * linha e copiar o conteúdo. A barra fica fora do `contentDOM`, então nada dela
- * entra no documento — o Markdown continua sendo só a cerca com a linguagem.
+ * Bloco de código com barra própria: linguagem, quebra de linha e copiar. A barra
+ * fica fora do `contentDOM`, então nada dela entra no documento — o Markdown
+ * continua sendo só a cerca com a linguagem.
  */
 export class CodeBlockView implements NodeView {
   dom: HTMLElement
@@ -15,7 +21,11 @@ export class CodeBlockView implements NodeView {
   private node: ProseNode
   private readonly view: EditorView
   private readonly getPos: () => number | undefined
-  private readonly select: HTMLSelectElement
+
+  private readonly languageButton: HTMLButtonElement
+  private readonly languageText: HTMLSpanElement
+  private readonly menu: HTMLDivElement
+  private readonly aoClicarFora: (event: MouseEvent) => void
 
   constructor(node: ProseNode, view: EditorView, getPos: () => number | undefined) {
     this.node = node
@@ -30,19 +40,26 @@ export class CodeBlockView implements NodeView {
     barra.className = "flynow-editor-code-toolbar"
     barra.contentEditable = "false"
 
-    this.select = document.createElement("select")
-    this.select.className = "flynow-editor-code-language"
-    this.select.setAttribute("aria-label", "Linguagem do bloco de código")
-    for (const { value, label } of codeLanguages) {
-      const opcao = document.createElement("option")
-      opcao.value = value ?? ""
-      opcao.textContent = label
-      this.select.appendChild(opcao)
-    }
-    this.select.value = node.attrs.language ?? ""
-    this.select.addEventListener("change", () => this.setLanguage(this.select.value || null))
+    this.languageText = document.createElement("span")
+    this.languageButton = document.createElement("button")
+    this.languageButton.type = "button"
+    this.languageButton.className = "flynow-editor-code-language"
+    this.languageButton.setAttribute("aria-label", "Linguagem do bloco de código")
+    this.languageButton.setAttribute("aria-haspopup", "listbox")
+    this.languageButton.appendChild(this.languageText)
+    this.languageButton.appendChild(chevronIcon())
+    this.languageButton.addEventListener("mousedown", (event) => event.preventDefault())
+    this.languageButton.addEventListener("click", () => this.toggleMenu())
 
-    barra.appendChild(this.select)
+    this.menu = document.createElement("div")
+    this.menu.className = "flynow-editor-code-menu"
+    this.menu.setAttribute("role", "listbox")
+    this.menu.hidden = true
+    for (const { value, label } of codeLanguages) {
+      this.menu.appendChild(this.menuItem(value, label))
+    }
+
+    barra.appendChild(this.languageButton)
     barra.appendChild(this.button("Quebrar linhas", wrapIcon(), () => this.toggleWrap()))
     barra.appendChild(this.button("Copiar código", copyIcon(), (botao) => this.copy(botao)))
 
@@ -51,22 +68,32 @@ export class CodeBlockView implements NodeView {
     pre.appendChild(this.contentDOM)
 
     this.dom.appendChild(barra)
+    this.dom.appendChild(this.menu)
     this.dom.appendChild(pre)
+    this.renderLanguage()
+
+    // Um clique em qualquer outro lugar fecha o menu, como em qualquer dropdown.
+    this.aoClicarFora = (event) => {
+      if (!this.menu.hidden && !this.dom.contains(event.target as Node)) this.closeMenu()
+    }
+    document.addEventListener("mousedown", this.aoClicarFora)
   }
 
-  /** Só o mesmo tipo de nó reaproveita esta view; o resto o ProseMirror recria. */
   update(node: ProseNode): boolean {
     if (node.type !== this.node.type) return false
 
     this.node = node
-    this.select.value = node.attrs.language ?? ""
+    this.renderLanguage()
 
     return true
   }
 
-  /** Cliques na barra não devem mexer na seleção do documento. */
+  /** Cliques na barra e no menu não devem mexer na seleção do documento. */
   stopEvent(event: Event): boolean {
-    return event.target instanceof HTMLElement && event.target.closest(".flynow-editor-code-toolbar") !== null
+    const alvo = event.target
+    if (!(alvo instanceof HTMLElement)) return false
+
+    return alvo.closest(".flynow-editor-code-toolbar, .flynow-editor-code-menu") !== null
   }
 
   /**
@@ -75,6 +102,68 @@ export class CodeBlockView implements NodeView {
    */
   ignoreMutation(mutation: ViewMutationRecord): boolean {
     return !this.contentDOM.contains(mutation.target)
+  }
+
+  destroy(): void {
+    document.removeEventListener("mousedown", this.aoClicarFora)
+  }
+
+  /** No modo automático o rótulo mostra a linguagem que o realce reconheceu. */
+  private renderLanguage(): void {
+    const language = this.node.attrs.language as string | null
+    const detectada = language === null ? this.detect() : null
+
+    this.languageText.textContent = detectada
+      ? `${languageLabel(detectada)} (auto)`
+      : languageLabel(language)
+
+    for (const item of this.menu.querySelectorAll<HTMLElement>("[data-value]")) {
+      const valor = item.dataset.value === "" ? null : item.dataset.value
+      item.setAttribute("aria-selected", String(valor === language))
+    }
+  }
+
+  private detect(): string | null {
+    const texto = this.node.textContent
+    if (texto.trim() === "") return null
+
+    try {
+      return lowlight.highlightAuto(texto).data?.language ?? null
+    } catch {
+      return null
+    }
+  }
+
+  private menuItem(value: string | null, label: string): HTMLButtonElement {
+    const item = document.createElement("button")
+    item.type = "button"
+    item.className = "flynow-editor-code-menu-item"
+    item.dataset.value = value ?? ""
+    item.setAttribute("role", "option")
+    item.textContent = label
+    item.addEventListener("mousedown", (event) => event.preventDefault())
+    item.addEventListener("click", () => {
+      this.setLanguage(value)
+      this.closeMenu()
+    })
+
+    return item
+  }
+
+  private toggleMenu(): void {
+    if (this.menu.hidden) {
+      this.menu.hidden = false
+      this.menu
+        .querySelector<HTMLElement>('[aria-selected="true"]')
+        ?.scrollIntoView({ block: "nearest" })
+      return
+    }
+
+    this.closeMenu()
+  }
+
+  private closeMenu(): void {
+    this.menu.hidden = true
   }
 
   private button(
@@ -98,9 +187,13 @@ export class CodeBlockView implements NodeView {
     const pos = this.getPos()
     if (pos === undefined) return
 
-    this.view.dispatch(
-      this.view.state.tr.setNodeMarkup(pos, undefined, { ...this.node.attrs, language })
-    )
+    const valido = language === null || isSupported(language) ? language : null
+    const tr = this.view.state.tr.setNodeMarkup(pos, undefined, {
+      ...this.node.attrs,
+      language: valido,
+    })
+
+    this.view.dispatch(refreshHighlight(tr))
     this.view.focus()
   }
 
@@ -147,6 +240,10 @@ function svg(...paths: string[]): SVGElement {
   }
 
   return elemento
+}
+
+function chevronIcon(): SVGElement {
+  return svg("M6 9l6 6 6-6")
 }
 
 function wrapIcon(): SVGElement {

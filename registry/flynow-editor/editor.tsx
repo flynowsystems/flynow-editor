@@ -11,10 +11,12 @@ import { EditorToolbar } from "@/components/ui/editor/editor-toolbar"
 import { toggleTaskAt } from "@/components/ui/editor/commands"
 import { fromMarkdown, toMarkdown } from "@/components/ui/editor/lib/markdown"
 import { CodeBlockView } from "@/components/ui/editor/plugins/code-block-view"
+import { buildCodeKeymap } from "@/components/ui/editor/plugins/code-indent"
 import { buildInputRules } from "@/components/ui/editor/plugins/input-rules"
 import { buildKeymap } from "@/components/ui/editor/plugins/keymap"
 import { imageUploadPlugin, type UploadHandler } from "@/components/ui/editor/plugins/image-upload"
 import { placeholderPlugin } from "@/components/ui/editor/plugins/placeholder"
+import { syntaxHighlightPlugin } from "@/components/ui/editor/plugins/syntax-highlight"
 import { schema } from "@/components/ui/editor/schema"
 
 export type EditorHandle = {
@@ -85,12 +87,14 @@ export function Editor({
       doc: fromMarkdown(lastMarkdown.current),
       plugins: [
         buildInputRules(),
+        buildCodeKeymap(),
         ...buildKeymap({ onSubmit: () => callbacks.current.onSubmit?.() }),
         ...imageUploadPlugin(callbacks.current.onUpload),
         history(),
         dropCursor({ color: "var(--flynow-editor-caret, currentColor)" }),
         gapCursor(),
         placeholderPlugin(placeholder),
+        syntaxHighlightPlugin(),
       ],
     })
 

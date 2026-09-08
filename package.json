@@ -2,7 +2,7 @@
   "name": "@flynow/editor",
   "version": "0.1.0",
   "private": false,
-  "description": "Editor de conte\u00fado da Fly Now: ProseMirror por baixo, c\u00f3digo no seu projeto, no estilo shadcn.",
+  "description": "Editor de conteúdo da Fly Now: ProseMirror por baixo, código no seu projeto, no estilo shadcn.",
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -15,6 +15,7 @@
     "react-dom": "^18 || ^19"
   },
   "dependencies": {
+    "lowlight": "^3.3.0",
     "markdown-it": "^14.1.0",
     "prosemirror-commands": "^1.7.1",
     "prosemirror-dropcursor": "^1.8.2",
