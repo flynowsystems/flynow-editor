@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url"
 
 const raiz = join(dirname(fileURLToPath(import.meta.url)), "..")
 const registry = JSON.parse(await readFile(join(raiz, "registry.json"), "utf8"))
-const saida = join(raiz, "public", "r")
+const saida = join(raiz, "docs", "r")
 
 await mkdir(saida, { recursive: true })
 
@@ -34,5 +34,5 @@ for (const item of registry.items) {
   }
 
   await writeFile(join(saida, `${item.name}.json`), `${JSON.stringify(conteudo, null, 2)}\n`)
-  console.log(`→ public/r/${item.name}.json (${files.length} arquivos)`)
+  console.log(`→ docs/r/${item.name}.json (${files.length} arquivos)`)
 }

@@ -7,21 +7,32 @@ projeto que instala, no estilo shadcn.
 
 ## Instalar
 
-Enquanto o registry não está publicado:
-
 ```bash
-node scripts/sync.mjs ../../TicketFlow/ticketflow-app
+npx shadcn@latest add https://flynowsystems.github.io/flynow-editor/r/editor.json
 ```
 
-O script copia os arquivos para `src/components/ui/editor/` e lista as dependências
-a instalar. Depois, importe o tema uma vez (no `globals.css`):
+O CLI instala as dependências e copia os arquivos para
+`src/components/ui/editor/` do seu projeto. **O código passa a ser seu**: cor,
+espaçamento, atalhos e comportamento se ajustam ali, sem esperar release nossa.
+
+Depois, importe o tema uma vez — no `globals.css` (Tailwind v4) ou no layout raiz:
 
 ```css
 @import "../components/ui/editor/editor.css";
 ```
 
-Com o registry publicado, o mesmo item sai por
-`npx shadcn@latest add https://<host>/r/editor.json`.
+Se o seu projeto não usa o alias `@/`, ajuste os imports no topo dos arquivos
+copiados: eles se referenciam por `@/components/ui/editor/...`.
+
+### Sem o CLI
+
+Clonando o repositório, o mesmo conteúdo vai para um projeto com:
+
+```bash
+node scripts/sync.mjs ../caminho/do/projeto
+```
+
+O script lista as dependências a instalar ao final.
 
 ## Usar
 
@@ -74,12 +85,19 @@ existem, então o editor já nasce com a cara do app:
 }
 ```
 
+## Requisitos
+
+React 18 ou 19. Feito para **Next.js** (o componente já declara `"use client"`)
+com back em **Laravel**, mas nada no editor depende de um ou de outro: `onUpload`
+é um callback, então qualquer API serve.
+
 ## Desenvolvimento
 
 ```bash
 npm install
-npm test        # ida e volta do Markdown, regras de digitação e comandos
+npm test              # ida e volta do Markdown, regras de digitação e comandos
 npm run typecheck
+npm run build:registry  # gera docs/r/editor.json, o que o CLI do shadcn consome
 ```
 
 Os testes rodam em Node puro: o documento e os comandos do ProseMirror não precisam
@@ -92,3 +110,9 @@ arrastar ou botão, undo/redo, barra flutuante, tema e Markdown nos dois sentido
 
 Fora da v1: menções `@`, comandos `/`, tabelas, realce de sintaxe no bloco de código
 e edição colaborativa. O mapeamento completo está em [docs/MAPEAMENTO.md](docs/MAPEAMENTO.md).
+
+## Publicação
+
+`docs/r/editor.json` é servido pelo GitHub Pages (branch `main`, pasta `/docs`) e é
+o que o CLI do shadcn lê. Depois de mexer em qualquer arquivo do editor, rode
+`npm run build:registry` e faça commit do JSON gerado — o CI cobra isso.
