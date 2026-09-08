@@ -10,6 +10,7 @@ import { EditorView } from "prosemirror-view"
 import { EditorToolbar } from "@/components/ui/editor/editor-toolbar"
 import { toggleTaskAt } from "@/components/ui/editor/commands"
 import { fromMarkdown, toMarkdown } from "@/components/ui/editor/lib/markdown"
+import { CodeBlockView } from "@/components/ui/editor/plugins/code-block-view"
 import { buildInputRules } from "@/components/ui/editor/plugins/input-rules"
 import { buildKeymap } from "@/components/ui/editor/plugins/keymap"
 import { imageUploadPlugin, type UploadHandler } from "@/components/ui/editor/plugins/image-upload"
@@ -97,6 +98,9 @@ export function Editor({
       state,
       editable: () => !readOnly,
       attributes: { class: "flynow-editor-content", spellcheck: "true" },
+      nodeViews: {
+        code_block: (node, nodeView, getPos) => new CodeBlockView(node, nodeView, getPos),
+      },
       dispatchTransaction(transaction) {
         const proximo = instance.state.apply(transaction)
         instance.updateState(proximo)

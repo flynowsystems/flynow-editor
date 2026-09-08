@@ -61,10 +61,18 @@ import { Editor } from "@/components/ui/editor/editor"
 | `toolbar` | `"floating"` (padrão), `"fixed"` ou `"none"`. |
 | `ref` | `focus()`, `getMarkdown()`, `setMarkdown()`. |
 
+## Bloco de código
+
+Três crases abrem o bloco na hora, como no Linear. A barra do bloco traz o seletor
+de linguagem (31 opções), o botão de quebrar linhas e o de copiar — nada disso entra
+no documento: o Markdown salvo é só a cerca com a linguagem.
+
+Para mudar a lista de linguagens, edite `lib/languages.ts` no seu projeto.
+
 ## O que o editor entende
 
 Títulos (`# `, `## `, `### `), listas (`- `, `1. `), lista de tarefas (`[ ] `),
-citação (`> `), bloco de código (```` ``` ````), régua (`---`), **negrito**,
+citação (`> `), bloco de código (`` ``` ``), régua (`---`), **negrito**,
 *itálico*, ~~riscado~~, `código`, links e imagens.
 
 Atalhos: `Mod+B`, `Mod+I`, `Mod+E`, `Shift+Mod+X`, `Shift+Mod+1..3`,
@@ -108,8 +116,8 @@ de navegador, então dá para exercitar digitação e formatação sem DOM.
 Feito: formatação, listas (inclusive de tarefas), código, links, imagens por colar,
 arrastar ou botão, undo/redo, barra flutuante, tema e Markdown nos dois sentidos.
 
-Fora da v1: menções `@`, comandos `/`, tabelas, realce de sintaxe no bloco de código
-e edição colaborativa. O mapeamento completo está em [docs/MAPEAMENTO.md](docs/MAPEAMENTO.md).
+Fora da v1: menções `@`, comandos `/`, tabelas, realce de sintaxe (as cores por
+token — a linguagem já é guardada) e edição colaborativa. O mapeamento completo está em [docs/MAPEAMENTO.md](docs/MAPEAMENTO.md).
 
 ## Publicação
 

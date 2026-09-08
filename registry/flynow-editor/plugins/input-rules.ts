@@ -38,7 +38,7 @@ export function buildInputRules(): Plugin {
       textblockTypeInputRule(/^(#{1,3})\s$/, schema.nodes.heading, (match) => ({
         level: match[1].length,
       })),
-      textblockTypeInputRule(/^```([a-z]*)?\s$/, schema.nodes.code_block, (match) => ({
+      textblockTypeInputRule(/^```([a-zA-Z0-9+#-]*)$/, schema.nodes.code_block, (match) => ({
         language: match[1] || null,
       })),
       wrappingInputRule(/^\s*>\s$/, schema.nodes.blockquote),

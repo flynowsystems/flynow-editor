@@ -113,6 +113,87 @@
   border-radius: var(--flynow-editor-radius);
 }
 
+/* Bloco de código ----------------------------------------------------------- */
+
+.flynow-editor-code {
+  position: relative;
+  border-radius: var(--flynow-editor-radius);
+  background: var(--flynow-editor-code-bg);
+}
+
+.flynow-editor-code pre {
+  background: none;
+  margin: 0;
+  padding: 0.75rem 1rem;
+}
+
+.flynow-editor-code[data-wrap="true"] pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.flynow-editor-code-toolbar {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.flynow-editor-code:hover .flynow-editor-code-toolbar,
+.flynow-editor-code:focus-within .flynow-editor-code-toolbar {
+  opacity: 1;
+}
+
+.flynow-editor-code-language {
+  appearance: none;
+  height: 1.75rem;
+  padding: 0 0.5rem;
+  border-radius: calc(var(--flynow-editor-radius) - 0.125rem);
+  background: var(--flynow-editor-surface);
+  color: var(--flynow-editor-muted);
+  border: 1px solid var(--flynow-editor-border);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.flynow-editor-code-language:hover {
+  color: var(--flynow-editor-fg);
+}
+
+.flynow-editor-code-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: calc(var(--flynow-editor-radius) - 0.125rem);
+  color: var(--flynow-editor-muted);
+  background: var(--flynow-editor-surface);
+  border: 1px solid var(--flynow-editor-border);
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+}
+
+.flynow-editor-code-action svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.flynow-editor-code-action:hover {
+  color: var(--flynow-editor-fg);
+  background: var(--flynow-editor-accent);
+}
+
+.flynow-editor-code-action[data-copied] {
+  color: var(--primary, #2563eb);
+}
+
 /* Lista de tarefas ---------------------------------------------------------- */
 
 .flynow-editor-content ul[data-type="task-list"] {

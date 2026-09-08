@@ -73,6 +73,16 @@
           "path": "registry/flynow-editor/plugins/image-upload.ts",
           "type": "registry:ui",
           "target": "components/ui/editor/plugins/image-upload.ts"
+        },
+        {
+          "path": "registry/flynow-editor/lib/languages.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/lib/languages.ts"
+        },
+        {
+          "path": "registry/flynow-editor/plugins/code-block-view.ts",
+          "type": "registry:ui",
+          "target": "components/ui/editor/plugins/code-block-view.ts"
         }
       ]
     }

@@ -91,10 +91,21 @@ test('"> " abre citação', () => {
   assert.equal(state.doc.firstChild?.type.name, "blockquote")
 })
 
-test('"```" abre bloco de código', () => {
-  const state = type("", "```ts ")
+test('"```" abre o bloco de código na terceira crase', () => {
+  const state = type("", "```")
+
   assert.equal(state.doc.firstChild?.type.name, "code_block")
-  assert.equal(state.doc.firstChild?.attrs.language, "ts")
+  // A linguagem nasce vazia: quem escolhe é a barra do próprio bloco.
+  assert.equal(state.doc.firstChild?.attrs.language, null)
+})
+
+test("linguagem escolhida na barra vai para a cerca do Markdown", () => {
+  const state = EditorState.create({ doc: fromMarkdown("```\nconst a = 1\n```") })
+  const comLinguagem = state.apply(
+    state.tr.setNodeMarkup(0, undefined, { language: "typescript" })
+  )
+
+  assert.equal(toMarkdown(comLinguagem.doc).trim(), "```typescript\nconst a = 1\n```")
 })
 
 test("marcação inline vira marca ao fechar", () => {
