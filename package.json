@@ -1,13 +1,14 @@
 {
   "name": "@flynow/editor",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "Editor de conte\u00fado da Fly Now: ProseMirror por baixo, c\u00f3digo no seu projeto, no estilo shadcn.",
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint registry",
-    "test": "node --experimental-strip-types --import ./scripts/alias-loader.mjs --test test/*.test.ts"
+    "test": "node --experimental-strip-types --import ./scripts/alias-loader.mjs --test test/*.test.ts",
+    "build:registry": "node scripts/build-registry.mjs"
   },
   "peerDependencies": {
     "react": "^18 || ^19",
@@ -34,5 +35,10 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "typescript": "^5.9.3"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flynowsystems/flynow-editor.git"
   }
 }
